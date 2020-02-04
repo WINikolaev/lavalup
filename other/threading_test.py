@@ -95,7 +95,7 @@ class myThread():
 
     def get_name(self):
         return self.thread.getName()
-
+    # override this function
     def handler(self):
         pass
 
