@@ -41,7 +41,7 @@ print('usersDict len: ', len(usersDict))
 print('############################TEST2############################')
 start = time.time()
 print('added users')
-for x in range(len(usersDict), len(usersDict) + 10000):
+for x in range(len(usersDict), len(usersDict) + 100000):
     usersDict[x] = User(123123, 18, "RU")
 print('added users: ', time.time() - start)
 
