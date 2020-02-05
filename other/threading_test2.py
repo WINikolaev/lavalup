@@ -71,6 +71,7 @@ class СyclicTimer(Thread):
         self.args = args if args is not None else []
         self.kwargs = kwargs if kwargs is not None else {}
         self.event = threading.Event()
+        self.lock = threading.Lock()
 
         if self.name:
             self.setName(self.name)
@@ -100,10 +101,13 @@ class СyclicTimer(Thread):
 class Backup(СyclicTimer):
     def __init__(self, period, name=None):
         СyclicTimer.__init__(self, period, name)
+    def writedata(self):
+        self.lock.acquire()
 
     def handler(self):
         print('++++++++++++++++++++++++++++++++++++++++++++++')
         print('Handler Backup: ', self.getName())
+        print('lock: ', self.lock.locked())
 
 
 class AD(СyclicTimer):
@@ -113,6 +117,7 @@ class AD(СyclicTimer):
     def handler(self):
         print('-----------------------------------------------')
         print('Handler AD: ', self.getName())
+
 
 
 def main():
@@ -130,8 +135,8 @@ def main():
         try:
             time.sleep(1)
             i += 1
-            if i == 500:
-                test2.stop()
+            if i == 10:
+                test2.writedata()
         except:
             test2.stop()
             test2.join()
