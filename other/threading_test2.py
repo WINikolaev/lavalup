@@ -82,20 +82,26 @@ class СyclicTimer(Thread):
     def stop(self):
         """Stop the timer if it hasn't finished yet."""
         self.event.set()
+        #self.lock.release()
         self.stop_while = True
 
     def run(self):
-        print('wait0: {}; '.format(self.event.is_set()))
+        print('RUN: {}; '.format(self.event.is_set()))
         while self.is_alive() and not self.stop_while:
             res = self.event.wait(self.period)
-            print('wait1: {}; res = {}'.format(self.event.is_set(), res))
             if not self.event.is_set():
                 self.handler()
            # self.event.set()
           #  print('wait2: {}; res = {}'.format(self.event.is_set(), res))
 
+    # example:
+    #def handler(self):
+    #   with lock:
+    #       if not self.stop_while:
+    #           return 1
     def handler(self):
             pass
+
 
 
 class Backup(СyclicTimer):
@@ -105,9 +111,11 @@ class Backup(СyclicTimer):
         self.lock.acquire()
 
     def handler(self):
-        print('++++++++++++++++++++++++++++++++++++++++++++++')
-        print('Handler Backup: ', self.getName())
-        print('lock: ', self.lock.locked())
+        print('***********************************************')
+        #print('lock: ', self.lock.locked())
+        with self.lock:
+            print('OK LOCK')
+
 
 
 class AD(СyclicTimer):
@@ -116,33 +124,36 @@ class AD(СyclicTimer):
 
     def handler(self):
         print('-----------------------------------------------')
-        print('Handler AD: ', self.getName())
+       # print('lock: ', self.lock.locked())
+        with self.lock:
+            print('OK LOCK')
 
 
 
 def main():
     print('Create thread')
     test2 = Backup(3, "thread_test")
-    test2.start()
-    test3 = AD(5, "igorek")
+    test3 = AD(3, "AD")
     test3.start()
-    # test = MyThread(3)
-    # test.start()
+    test2.start()
     i = 0
     while True:
         # print('main{}: t-{} | is_alive({})'.format(i, threading.active_count(), test.is_alive()))
-        print('main thread{} - {}: is_alive({})'.format(i, threading.active_count(), test2.is_alive()))
+        print('#####################################################################    main thread_{} - Thread{}: is_alive({})'.format(i, threading.active_count(), test2.is_alive()))
         try:
-            time.sleep(1)
+            time.sleep(5)
             i += 1
-            if i == 10:
+            if i == 5:
                 test2.writedata()
         except:
             test2.stop()
             test2.join()
+            test3.stop()
+            test3.join()
             print('break')
             break
 
+    print('end: ', test2.lock.locked())
     print('end: ', threading.active_count())
 
 
