@@ -1,4 +1,7 @@
 #include <iostream>
+#include <vector>
+#include <algorithm>
+#include "lambda.cpp"
 
 using namespace std;
 
@@ -29,12 +32,16 @@ int main() {
 	(str0.cref()) = 2000;
 	cout << "test1: " << str0.val() << endl;
 
-
-	cout << "test3: " << str0.val2(1) << endl;
-	cout << "test4: " << str0.val2(0) << endl;
-
-	auto test = foo{};
-	test.m_ = 2001;
-	cout << "test1: " << str0.val() << endl;
+	//lambda
+	//func();
+	//func_ref();
+	auto th = 3;
+	auto is_above = IsAbove(th);
+	auto test = is_above(5);
+	
+	auto func = Func{};
+	func();
+	// test equals true
+	
 	return 0;
 }
