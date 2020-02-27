@@ -2,6 +2,8 @@
 #include <algorithm>
 #include <vector>
 #include <list>
+#include <cassert>
+#include <functional>
 
 
 
@@ -67,3 +69,77 @@ public:
 private:
 	std::list<int> c{4,2};
 };
+
+// Mutable lambda
+// Capture by value
+
+auto func_mutable() -> void {
+	auto v = 7;
+	auto lambda = [v]() mutable {
+		std::cout << v << " ";
+		++v;
+	};
+	assert(v == 7);
+	lambda();
+	lambda();
+	assert(v == 7);
+	std::cout << "res: " << v;
+}
+
+auto func_mutable_ref() -> void {
+	auto v = 7;
+	auto lambda = [&v]() mutable {
+		std::cout << v << " ";
+		++v;
+	};
+	assert(v == 7);
+	lambda();
+	lambda();
+	assert(v == 9);
+	std::cout << "res: " << v;
+}
+
+class Foo2 {
+public:
+	auto member_function() {
+		auto a = 0;
+		auto b = 1.0f;
+		// Capture all variables by copy
+		auto lambda_0 = [=]() { std::cout << a << b << m_; };
+		// Capture all variables by reference
+		auto lambda_1 = [&]() { std::cout << a << b << m_; };
+		// Capture member variables by reference
+		auto lambda_2 = [this]() { std::cout << m_; };
+		// Capture member variables by copy
+		//auto lambda_3 = [*this]() { std::cout << m_; };
+	}
+private:
+	int m_{};
+};
+
+
+// Store the action to corresponding to clicking the buttoons
+class Button
+{
+private:
+	std::function<void(void)> on_click_{};
+public:
+	Button(std::function<void(void)> click);
+	~Button();
+
+	auto on_click() const {on_click_();}
+};
+Button::Button(std::function<void(void)> click) : on_click_(click) {}
+Button::~Button() {}
+
+auto make_buttons() {
+	auto beep_button = Button([beep_count = 0]() mutable {
+		std::cout << "Beep:" << beep_count << "! " << std::endl;
+		++beep_count;
+	});
+
+	auto bop_button = Button([]{ std::cout << "Bop. " << std::endl; });
+	auto silent_button = Button([]{});
+	auto buttons = std::vector<Button>{beep_button, bop_button, silent_button};
+	return buttons;
+}
