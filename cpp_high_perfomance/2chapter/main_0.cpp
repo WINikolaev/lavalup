@@ -46,10 +46,13 @@ int main() {
 	// func_mutable();
 	// func_mutable_ref();
 
-	auto buttons = make_buttons();
-	for(const auto& b: buttons) {
-		b.on_click();
-	}
-	buttons.front().on_click();
+	// auto buttons = make_buttons();
+	// for(const auto& b: buttons) {
+	// 	b.on_click();
+	// }
+	// buttons.front().on_click();
+
+	auto lbd_test_func_01 = lbd::test_polymorphic_lambda();
+	cout << "result: " << lbd_test_func_01(24.23, 56.24) << endl;
 	return 0;
 }

@@ -143,3 +143,14 @@ auto make_buttons() {
 	auto buttons = std::vector<Button>{beep_button, bop_button, silent_button};
 	return buttons;
 }
+
+//The polymorphic lambda
+namespace lbd {
+	auto test_polymorphic_lambda() {
+		auto v = 3;
+		auto lbd = [v](auto v1, auto v2) {
+			return v + v1*v2;
+		};
+		return lbd;
+	}
+}
